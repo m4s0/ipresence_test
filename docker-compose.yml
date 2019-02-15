@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+
+  nginx:
+    container_name: nginx
+    build: docker/nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./www:/var/www/
+    links:
+      - php-fpm
+    depends_on:
+      - php-fpm
+    env_file:
+      - docker/.env
+
+  php-fpm:
+    container_name: php-fpm
+    build: docker/php-fpm
+    ports:
+      - "2323:2323"
+    volumes:
+      - ./www:/var/www/
+    links:
+      - memcached
+    env_file:
+      - docker/.env
+
+  mysql:
+    container_name: mysql
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    env_file:
+      - docker/.env
+
+  memcached:
+    container_name: memcached
+    image: memcached:latest
+    ports:
+      - "11211:11211"
