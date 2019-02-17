@@ -8,20 +8,49 @@ parameters:
 services:
     # default configuration for services in *this* file
     _defaults:
-        autowire: true      # Automatically injects dependencies in your services.
-        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        public: true
+        autowire: false      # Automatically injects dependencies in your services.
+        autoconfigure: false # Automatically registers your services as commands, event subscribers, etc.
 
-    # makes classes in src/ available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
-    App\:
-        resource: '../src/*'
-        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+    memcached:
+        class: Memcached
+        calls:
+            - [ addServer, [ "%env(SYMFONY__MEMCACHE__HOST)%", "%env(SYMFONY__MEMCACHE__PORT)%" ]]
 
-    # controllers are imported separately to make sure services can be injected
-    # as action arguments even if you don't extend any base controller class
-    App\Controller\:
-        resource: '../src/Controller'
-        tags: ['controller.service_arguments']
+    ipresence.services.slug:
+        class: Ausi\SlugGenerator\SlugGenerator
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    ipresence.repository.author:
+        class: App\Entity\AuthorRepository
+        factory: ['@doctrine.orm.entity_manager', getRepository]
+        arguments:
+            - App\Entity\Author
+
+    ipresence.repository.quote:
+        class: App\Entity\QuoteRepository
+        factory: ['@doctrine.orm.entity_manager', getRepository]
+        arguments:
+            - App\Entity\Quote
+
+    ipresence.command.load_quotes:
+        class: App\Command\LoadQuotesCommand
+        arguments:
+            - '@doctrine.orm.default_entity_manager'
+            - '@ipresence.repository.author'
+            - '@ipresence.services.slug'
+            - '@kernel'
+        tags: ['console.command']
+
+    ipresence.services.quotes_handler:
+        class: App\Services\QuotesHandler
+        arguments:
+            - '@ipresence.repository.quote'
+            - '@memcached'
+            - 100
+
+    ipresence.usecase.get_quotes:
+        class: App\Usecase\GetQuotes
+        arguments:
+            - '@ipresence.services.quotes_handler'
+            - '@ipresence.repository.author'
+            - 10

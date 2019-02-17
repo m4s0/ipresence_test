@@ -83,6 +83,7 @@ class ComposerStaticInita220eccd39d525d39db97e387bada5a8
         ),
         'A' => 
         array (
+            'Ausi\\SlugGenerator\\' => 19,
             'App\\Tests\\' => 10,
             'App\\' => 4,
         ),
@@ -285,6 +286,10 @@ class ComposerStaticInita220eccd39d525d39db97e387bada5a8
         'DeepCopy\\' => 
         array (
             0 => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy',
+        ),
+        'Ausi\\SlugGenerator\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/ausi/slug-generator/src',
         ),
         'App\\Tests\\' => 
         array (

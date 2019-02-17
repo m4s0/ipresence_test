@@ -1,0 +1,27 @@
+App\Entity\Quote:
+    type: entity
+    table: quote
+    repositoryClass: App\Entity\QuoteRepository
+
+    id:
+        id:
+            type: bigint
+            nullable: false
+            unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        text:
+            type: string
+            nullable: false
+            length: 1000
+            fixed: false
+
+    manyToOne:
+        author:
+            targetEntity: Author
+            inversedBy: quotes
+            joinColumn:
+                name: author_id
+                referencedColumnName: id

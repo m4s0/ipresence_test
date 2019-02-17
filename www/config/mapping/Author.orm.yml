@@ -1,0 +1,36 @@
+App\Entity\Author:
+    type: entity
+    table: author
+    repositoryClass: App\Entity\AuthorRepository
+
+    id:
+        id:
+            type: bigint
+            nullable: false
+            unsigned: false
+            id: true
+            generator:
+                strategy: IDENTITY
+
+    uniqueConstraints:
+        idx:
+            columns:
+                - name
+                - slug
+
+    fields:
+        name:
+            type: string
+            nullable: false
+            length: 255
+            fixed: false
+        slug:
+            type: string
+            nullable: false
+            length: 255
+            fixed: false
+
+    oneToMany:
+        quotes:
+            targetEntity: Quote
+            mappedBy: author
